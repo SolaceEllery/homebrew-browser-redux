@@ -1467,12 +1467,15 @@ static void *run_update_rating_thread(void *arg) {
 	strcat(http_request, rating_number);
 	
 	strcat(http_request, " HTTP/1.0\r\nHost: ");
-	if (setting_repo == 0) {
-		if (codemii_backup == false) {
-			strcat(http_request, "www.codemii.com");
+	if (setting_repo == 0)
+    {
+		if (!codemii_backup)
+        {
+			strcat(http_request, "hbb1.oscwii.org");
 		}
-		else {
-			strcat(http_request, "www2.codemii.com");
+		else
+        {
+			strcat(http_request, "hbb2.oscwii.org");
 		}
 	}
 	else {
