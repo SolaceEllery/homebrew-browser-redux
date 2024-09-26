@@ -269,12 +269,12 @@ static void *run_icons_thread(void *arg) {
 	int x;
 	for (x = 0; x < array_length(total_list); x++) {
 		
-		while (changing_cat == true) {
+		while (changing_cat) {
 			download_icon_sleeping = true;
 			sleep(3);
 		}
 		
-		while (download_in_progress == true || extract_in_progress == true || delete_in_progress == true || in_menu == true) {
+		while (download_in_progress == true || extract_in_progress == true || delete_in_progress == true || in_menu) {
 			download_icon_sleeping = true;
 			sleep(3);
 		}
@@ -383,7 +383,7 @@ static void *run_icons_thread(void *arg) {
 		}
 		
 		// Grab the new img file
-		if (update_img_file == true && setting_online == true) {
+		if (update_img_file == true && setting_online) {
 			s32 create_result;
 			
 			char temp_path[200];
@@ -434,7 +434,7 @@ static void *run_icons_thread(void *arg) {
 							homebrew_list[y].content = total_list[x].content;
 						}
 					}
-					while (changing_cat == true) {
+					while (changing_cat) {
 						download_icon_sleeping = true;
 						sleep(3);
 					}
@@ -446,7 +446,7 @@ static void *run_icons_thread(void *arg) {
 							emulators_list[y].content = total_list[x].content;
 						}
 					}
-					while (changing_cat == true) {
+					while (changing_cat) {
 						download_icon_sleeping = true;
 						sleep(3);
 					}
@@ -458,7 +458,7 @@ static void *run_icons_thread(void *arg) {
 							games_list[y].content = total_list[x].content;
 						}
 					}
-					while (changing_cat == true) {
+					while (changing_cat) {
 						download_icon_sleeping = true;
 						sleep(3);
 					}
@@ -470,7 +470,7 @@ static void *run_icons_thread(void *arg) {
 							media_list[y].content = total_list[x].content;
 						}
 					}
-					while (changing_cat == true) {
+					while (changing_cat) {
 						download_icon_sleeping = true;
 						sleep(3);
 					}
@@ -482,7 +482,7 @@ static void *run_icons_thread(void *arg) {
 							utilities_list[y].content = total_list[x].content;
 						}
 					}
-					while (changing_cat == true) {
+					while (changing_cat) {
 						download_icon_sleeping = true;
 						sleep(3);
 					}
@@ -499,7 +499,7 @@ static void *run_icons_thread(void *arg) {
 		}
 		
 		// Sleep longer if downloaded image file
-		if (update_img_file == true) {
+		if (update_img_file) {
 			sleep(2);
 		}
 		else {
@@ -532,7 +532,7 @@ static void *run_download_thread(void *arg) {
 	download_progress_counter = 0; 
 	
 	// Check if there is enough space on SD card
-	if (setting_check_size == true) {
+	if (setting_check_size) {
 		int check_size = ((store_homebrew_list[0].total_app_size / 1024) / 1024) + ((store_homebrew_list[0].app_total_size / 1024) / 1024);
 		if (sd_card_free <= check_size) {
 			download_status = false;
@@ -546,7 +546,7 @@ static void *run_download_thread(void *arg) {
 		error_number = 10;
 	}
 	
-	if (download_status == true) {
+	if (download_status) {
 		download_part_size = (int) (store_homebrew_list[0].total_app_size / 100);
 		
 		// Download zip file
@@ -610,14 +610,14 @@ static void *run_download_thread(void *arg) {
 	}
 	
 	// Directories to create
-	if (store_homebrew_list[0].folders != NULL && download_status == true) {
+	if (store_homebrew_list[0].folders != NULL && download_status) {
 		char folders[1000];
 		strcpy(folders, store_homebrew_list[0].folders);
 		
 		char *split_tok;
 		split_tok = strtok (folders,";");
 		
-		while (split_tok != NULL && download_status == true) {
+		while (split_tok != NULL && download_status) {
 			char temp_create[150] = "sd:";
 			if (setting_use_sd == false) {
 				strcpy(temp_create,"usb:");
@@ -633,7 +633,7 @@ static void *run_download_thread(void *arg) {
 	}
 	
 	// Download the icon.png
-	if (download_status == true) {
+	if (download_status) {
 		
 		char icon_path[100] = "sd:/apps/";
 		if (setting_use_sd == false) {
@@ -655,7 +655,7 @@ static void *run_download_thread(void *arg) {
 		if (f == NULL) {
 			
 			if (strcmp(store_homebrew_list[0].name,"ftpii") == 0) {
-				if (setting_use_sd == true) {
+				if (setting_use_sd) {
 					if (create_and_request_file("sd:/apps/", store_homebrew_list[0].user_dirname, "/icon.png") != 1) { 
 						download_status = false;
 						error_number = 3;
@@ -669,7 +669,7 @@ static void *run_download_thread(void *arg) {
 				}
 			}
 			else {
-				if (setting_use_sd == true) {
+				if (setting_use_sd) {
 					if (create_and_request_file("sd:/apps/", store_homebrew_list[0].name, "/icon.png") != 1) { 
 						download_status = false;
 						error_number = 3;
@@ -689,9 +689,9 @@ static void *run_download_thread(void *arg) {
 		else {
 			fclose(f);
 			
-			if (setting_update_icon == true) {
+			if (setting_update_icon) {
 				if (strcmp(store_homebrew_list[0].name,"ftpii") == 0) {
-					if (setting_use_sd == true) {
+					if (setting_use_sd) {
 						if (create_and_request_file("sd:/apps/", store_homebrew_list[0].user_dirname, "/icon.png") != 1) { 
 							download_status = false;
 							error_number = 3;
@@ -705,7 +705,7 @@ static void *run_download_thread(void *arg) {
 					}
 				}
 				else { 
-					if (setting_use_sd == true) {
+					if (setting_use_sd) {
 						if (create_and_request_file("sd:/apps/", store_homebrew_list[0].name, "/icon.png") != 1) { 
 							download_status = false;
 							error_number = 3;
@@ -828,8 +828,8 @@ static void *run_download_thread(void *arg) {
 	strcat(extractzipfile, ".zip");
 	
 	while (extract_attempt < 3) {
-		if (setting_use_sd == true) {
-			if (unzipArchive(extractzipfile, "sd:/") == true) {
+		if (setting_use_sd) {
+			if (unzipArchive(extractzipfile, "sd:/")) {
 				
 				if (strcmp(store_homebrew_list[0].name,"ftpii") == 0 && strcmp(store_homebrew_list[0].user_dirname,"ftpii") != 0) {
 					char renamed[100] = "sd:/apps/";
@@ -854,7 +854,7 @@ static void *run_download_thread(void *arg) {
 			}
 		}
 		else {
-			if (unzipArchive(extractzipfile, "usb:/") == true) {
+			if (unzipArchive(extractzipfile, "usb:/")) {
 				
 				if (strcmp(store_homebrew_list[0].name,"ftpii") == 0 && strcmp(store_homebrew_list[0].user_dirname,"ftpii") != 0) {
 					char renamed[100] = "usb:/apps/";
@@ -880,7 +880,7 @@ static void *run_download_thread(void *arg) {
 		}
 	} 
 	
-	if (cancel_extract == true) {
+	if (cancel_extract) {
 		extract_status = false;
 		extract_in_progress = -1;
 		error_number = 4;
@@ -920,7 +920,7 @@ static void *run_download_thread(void *arg) {
 		FILE *ftheme = fopen(theme_path, "rb");
 		
 		if (ftheme == NULL) {
-			if (extract_status == true) {
+			if (extract_status) {
 				extract_status = false;
 				error_number = 5;
 			}
@@ -943,7 +943,7 @@ static void *run_download_thread(void *arg) {
 		fclose(f);
 		
 		// Rename it to what they had before (hb sorter)
-		if (store_homebrew_list[0].boot_bak == true) {
+		if (store_homebrew_list[0].boot_bak) {
 			char boot_path_bak[100];
 			strcpy(boot_path_bak, boot_path);
 			strcat(boot_path_bak, ".bak");
@@ -1038,7 +1038,7 @@ static void *run_delete_thread(void *arg) {
 				}
 			}
 			
-			if (ok_to_del == true) {
+			if (ok_to_del) {
 				//printf("OK TO DEL\n");
 				char temp_del[200] = "sd:";
 				if (setting_use_sd == false) {
@@ -1059,7 +1059,7 @@ static void *run_delete_thread(void *arg) {
 		char *split_tok;
 		split_tok = strtok (folders,";");
 		
-		while (split_tok != NULL && delete_status == true) {
+		while (split_tok != NULL && delete_status) {
 			
 			// NEW DELETE METHOD
 			bool ok_to_del = true;
@@ -1075,7 +1075,7 @@ static void *run_delete_thread(void *arg) {
 				split_tok1 = strtok (NULL, ";");
 			}
 			
-			if (ok_to_del == true) {
+			if (ok_to_del) {
 				char temp_del[200] = "sd:";
 				if (setting_use_sd == false) {
 					strcpy(temp_del,"usb:");
@@ -1102,7 +1102,7 @@ static void *run_delete_thread(void *arg) {
 	}
 	
 	// Delete the icon.png, meta.xml and boot.dol/elf
-	if (delete_status == true) {
+	if (delete_status) {
 		char del_file[150] = "sd:/apps/";
 		if (setting_use_sd == false) {
 			strcpy(del_file,"usb:/apps/");
@@ -1123,7 +1123,7 @@ static void *run_delete_thread(void *arg) {
 			error_number = 6;
 		}
 	}
-	if (delete_status == true) {
+	if (delete_status) {
 		char del_file[150] = "sd:/apps/";
 		if (setting_use_sd == false) {
 			strcpy(del_file,"usb:/apps/");
@@ -1144,7 +1144,7 @@ static void *run_delete_thread(void *arg) {
 			error_number = 6;
 		}
 	}
-	if (delete_status == true) {
+	if (delete_status) {
 		char del_file[150] = "sd:/apps/";
 		if (setting_use_sd == false) {
 			strcpy(del_file,"usb:/apps/");
@@ -1161,7 +1161,7 @@ static void *run_delete_thread(void *arg) {
 		strcat(del_file, store_homebrew_list[0].boot_ext);
 		
 		// hb sorter
-		if (store_homebrew_list[0].boot_bak == true) {
+		if (store_homebrew_list[0].boot_bak) {
 			strcat(del_file, ".bak");
 		}
 		
@@ -1204,7 +1204,7 @@ static void *run_delete_thread(void *arg) {
 		char *split_tok;
 		split_tok = strtok (folders,";");
 		
-		while (split_tok != NULL && delete_status == true) {
+		while (split_tok != NULL && delete_status) {
 			
 			strcpy(directory[remove_count],split_tok);
 			remove_count++;
@@ -1226,7 +1226,7 @@ static void *run_delete_thread(void *arg) {
 				}
 			}
 			
-			if (delete_status == true && ok_to_del == true) {
+			if (delete_status == true && ok_to_del) {
 				char temp_del[200] = "sd:";
 				if (setting_use_sd == false) {
 					strcpy(temp_del,"usb:");
@@ -1243,7 +1243,7 @@ static void *run_delete_thread(void *arg) {
 	}
 	
 	// Delete all files from main folder
-	if (delete_status == true) {
+	if (delete_status) {
 		char main_folder[300] = "/apps/";
 		strcat(main_folder, store_homebrew_list[0].name);
 		
@@ -1257,7 +1257,7 @@ static void *run_delete_thread(void *arg) {
 			}
 		}
 		
-		if (ok_to_del == true) {
+		if (ok_to_del) {
 			char app_dir[100] = "sd:/apps/";
 			if (setting_use_sd == false) {
 				strcpy(app_dir,"usb:/apps/");
@@ -1275,7 +1275,7 @@ static void *run_delete_thread(void *arg) {
 	}
 	
 	// Standard directory to delete
-	if (delete_status == true) {
+	if (delete_status) {
 		char app_dir[100] = "sd:/apps/";
 		if (setting_use_sd == false) {
 			strcpy(app_dir,"usb:/apps/");
@@ -1403,7 +1403,7 @@ static void *run_rating_thread(void *arg) {
 					http_data = true;
 				}
 				
-				if (http_data == true) {
+				if (http_data) {
 					//int rating = atoi(cmd_line);
 					//homebrew_list[selected_app].user_rating = rating;
 					if ((strcmp(cmd_line,"1") == 0) || (strcmp(cmd_line,"2") == 0) || (strcmp(cmd_line,"3") == 0) || (strcmp(cmd_line,"4") == 0) || (strcmp(cmd_line,"5") == 0)) {
@@ -1524,7 +1524,7 @@ static void *run_update_rating_thread(void *arg) {
 					http_data = true;
 				}
 				
-				if (http_data == true) {
+				if (http_data) {
 					//int rating = atoi(cmd_line);
 					//homebrew_list[selected_app].user_rating = rating;
 					if ((strcmp(cmd_line,"1") == 0) || (strcmp(cmd_line,"2") == 0) || (strcmp(cmd_line,"3") == 0) || (strcmp(cmd_line,"4") == 0) || (strcmp(cmd_line,"5") == 0)) {
@@ -1565,7 +1565,7 @@ static void *run_music_thread(void *arg) {
 	
 	FILE *f;
 	
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		f = fopen("sd:/apps/homebrew_browser/loop.mp3", "rb");
 	}
 	else {
@@ -1593,7 +1593,7 @@ static void *run_music_thread(void *arg) {
 			if(!MP3Player_IsPlaying()) {
 				MP3Player_PlayBuffer(buffer, mp3_size+29200, NULL);
 			}
-			if (exiting == true || stop_mp3_music == true) {
+			if (exiting == true || stop_mp3_music) {
 				MP3Player_Stop();
 				stop_mp3_music = false;
 				break;
@@ -1614,7 +1614,7 @@ u8 initialise_music() {
 void initialise_mod_music() {
 	FILE *f;
 	
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		f = fopen("sd:/apps/homebrew_browser/loop.mod", "rb");
 	}
 	else {
@@ -1653,7 +1653,7 @@ void play_mod_music() {
 	FILE *f;
 	
 	// MP3
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		f = fopen("sd:/apps/homebrew_browser/loop.mp3", "rb");
 	}
 	else {
@@ -1669,7 +1669,7 @@ void play_mod_music() {
 	
 	// OGG
 	if (playing_mp3 == false) {
-		if (setting_use_sd == true) {
+		if (setting_use_sd) {
 			f = fopen("sd:/apps/homebrew_browser/loop.ogg", "rb");
 		}
 		else {
@@ -1704,7 +1704,7 @@ void play_mod_music() {
 	
 	// MOD
 	if (playing_mp3 == false && playing_ogg == false) {
-		if (setting_use_sd == true) {
+		if (setting_use_sd) {
 			f = fopen("sd:/apps/homebrew_browser/loop.mod", "rb");
 		}
 		else {
@@ -1732,9 +1732,9 @@ void stop_mod_music() {
 }
 
 static void *run_request_thread(void *arg) {
-	if (setting_online == true) {
+	if (setting_online) {
 		if (setting_repo == 0) {
-			if (setting_use_sd == true) {
+			if (setting_use_sd) {
 				if (create_and_request_file("sd:/apps/", "homebrew_browser", "/listv036.txt") == 1) { 
 					printf("Homebrew List received.\n");
 					list_received = true;
@@ -1751,7 +1751,7 @@ static void *run_request_thread(void *arg) {
 			//char list_file[100] = "/hbb/homebrew_browser/listv030.txt";
 			//repo_list[setting_repo].list_file
 			
-			if (setting_use_sd == true) {
+			if (setting_use_sd) {
 				if (request_list_file("sd:/apps/homebrew_browser/external_repo_list.txt", repo_list[setting_repo].list_file) == 1) { 
 					printf("Homebrew List received.\n");
 					list_received = true;
@@ -1819,7 +1819,7 @@ void save_no_manage_list() {
 	if (fu != NULL) {
 		int x = 0;
 		for (x = 0; x < total_list_count; x++) {
-			if (total_list[x].local_app_size > 0 && total_list[x].no_manage == true) {
+			if (total_list[x].local_app_size > 0 && total_list[x].no_manage) {
 				char testname[100];
 				strcpy(testname, total_list[x].name);
 				int leng=strlen(testname);
@@ -2007,7 +2007,7 @@ void load_settings() {
 	FILE *fp = NULL;
 	int loaded_from = true;
 	
-	if (sd_mounted == true) {
+	if (sd_mounted) {
 		fp = fopen("sd:/apps/homebrew_browser/settings.xml", "rb");
 		if (fp == NULL) {
 			fclose(fp);
@@ -2047,7 +2047,7 @@ void load_settings() {
 			if (mxmlElementGetAttr(data,"setting_music")) {
 				setting_music = atoi(mxmlElementGetAttr(data,"setting_music"));
 			}
-			if (mxmlElementGetAttr(data,"setting_online") && setting_online == true) {
+			if (mxmlElementGetAttr(data,"setting_online") && setting_online) {
 				setting_online = atoi(mxmlElementGetAttr(data,"setting_online"));
 			}
 			if (mxmlElementGetAttr(data,"setting_rumble")) {
@@ -2110,7 +2110,7 @@ void load_settings() {
 			mxmlDelete(data);
 			mxmlDelete(tree);
 			
-			if (loaded_from == true) {
+			if (loaded_from) {
 				printf("Settings loaded from SD card.\n");
 			}
 			else {
@@ -2129,7 +2129,7 @@ void load_settings() {
 			printf("\n");
 		}
 		else {
-			if (loaded_from == true) {
+			if (loaded_from) {
 				remove_file("sd:/apps/homebrew_browser/settings.xml");
 			}
 			else {
@@ -2140,12 +2140,12 @@ void load_settings() {
 	fclose(fp);
 	
 	// Setting repo revert to codemii
-	if (setting_repo_revert == true) {
+	if (setting_repo_revert) {
 		setting_repo = 0;
 	}
 	
 	// What device to use?
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		strcpy(rootdir, "sd:/");
 	}
 	else {
@@ -2243,7 +2243,7 @@ void sort_by_downloads (bool min_to_max) {
 			now = temp_list[x].app_downloads;
 			next = temp_list[x+1].app_downloads;
 			
-			if (min_to_max == true) {
+			if (min_to_max) {
 				if (next < now) {
 					temp1_list[0] = temp_list[x+1];
 					temp_list[x+1] = temp_list[x];
@@ -2317,7 +2317,7 @@ void sort_by_rating (bool min_to_max) {
 			now = temp_list[x].app_downloads;
 			next = temp_list[x+1].app_downloads;
 			
-			if (min_to_max == true) {
+			if (min_to_max) {
 				if (next < now) {
 					temp1_list[0] = temp_list[x+1];
 					temp_list[x+1] = temp_list[x];
@@ -2398,7 +2398,7 @@ void sort_by_name (bool min_to_max) {
 			//next = temp_list[x+1].app_name;
 			now = strcmp(temp_list[x].app_name,temp_list[x+1].app_name);
 			
-			if (min_to_max == true) {
+			if (min_to_max) {
 				if (now < 0) {
 					temp1_list[0] = temp_list[x+1];
 					temp_list[x+1] = temp_list[x];
@@ -2480,7 +2480,7 @@ void sort_by_date (bool min_to_max) {
 			now = temp_list[x].app_downloads;
 			next = temp_list[x+1].app_downloads;
 			
-			if (min_to_max == true) {
+			if (min_to_max) {
 				if (next < now) {
 					temp1_list[0] = temp_list[x+1];
 					temp_list[x+1] = temp_list[x];
@@ -2693,7 +2693,7 @@ bool hide_apps_updated() {
 		if (temp_list2[i].local_app_size == temp_list2[i].app_size && temp_list2[i].in_download_queue >= 1) {
 			homebrew_list[j] = temp_list2[i];
 		}
-		else if (temp_list2[i].local_app_size != temp_list2[i].app_size && temp_list2[i].in_download_queue == true) {
+		else if (temp_list2[i].local_app_size != temp_list2[i].app_size && temp_list2[i].in_download_queue) {
 			homebrew_list[j] = temp_list2[i];
 		}
 		else {
@@ -2713,7 +2713,7 @@ bool hide_apps_updated() {
 			homebrew_list[j] = temp_list2[i];
 			j++;
 		}
-		else if (temp_list2[i].local_app_size != temp_list2[i].app_size && temp_list2[i].in_download_queue == true) {
+		else if (temp_list2[i].local_app_size != temp_list2[i].app_size && temp_list2[i].in_download_queue) {
 			homebrew_list[j] = temp_list2[i];
 			j++;
 		}
@@ -2781,7 +2781,7 @@ void initialise_fat() {
 		printf("Attempting to mount SD card... ");
 		if (initialise_device(METHOD_SD)) {
 			strcpy(rootdir, "sd:/");
-			if (test_fat() == true) {
+			if (test_fat()) {
 				fat_init = true;
 				sd_mounted = true;
 				printf("SD card mounted.\n");
@@ -2796,7 +2796,7 @@ void initialise_fat() {
 			printf("Attempting to mount USB device... ");
 			if (initialise_device(METHOD_USB)) {
 				strcpy(rootdir, "usb:/");
-				if (test_fat() == true) {
+				if (test_fat()) {
 					fat_init = true;
 					usb_mounted = true;
 					printf("USB device mounted.\n");
@@ -3050,7 +3050,7 @@ void initialise_codemii() {
 void initialise_codemii_backup() {
 	printf("Requesting IP address of www2.codemii.com... ");
 	hostname_ok = true;
-	if (setting_server == true) {
+	if (setting_server) {
 		initializedns();
 	}
 	IP_ADDRESS = getipbynamecached("www2.codemii.com");
@@ -3349,7 +3349,7 @@ void download_queue_size() {
 // Check if icon.png or meta.xml is missing and if so download them
 void check_missing_files() {
 	
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		// Open the file 
 		FILE *f = fopen("sd:/apps/homebrew_browser/icon.png", "rb");
 		
@@ -3399,7 +3399,7 @@ void check_missing_files() {
 void check_temp_files() {
 	int x = 0;	
 	
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		char path[100] = "sd:/apps/homebrew_browser/temp/";
 		dir = opendir(path);
 		
@@ -3432,7 +3432,7 @@ void check_temp_files() {
 			}
 			else {
 				printf("\n\nExtracting image files...\n");
-				if (unzipArchive("sd:/apps/homebrew_browser/temp_files.zip", "sd:/apps/homebrew_browser/temp/") == true) {
+				if (unzipArchive("sd:/apps/homebrew_browser/temp_files.zip", "sd:/apps/homebrew_browser/temp/")) {
 					if (cancel_extract == false) {
 						printf("\nDownloaded and Extracted images successfully.\n\n");
 					}
@@ -3445,7 +3445,7 @@ void check_temp_files() {
 			remove_file("sd:/apps/homebrew_browser/temp_files.zip");
 			hbb_updating = false;
 			
-			if (cancel_download == true || cancel_extract == true) {
+			if (cancel_download == true || cancel_extract) {
 				printf("\nCancelled download and extracting of image files.");
 				cancel_download = false;
 				cancel_extract = false;
@@ -3487,7 +3487,7 @@ void check_temp_files() {
 			}
 			else {
 				printf("\n\nExtracting image files...\n");
-				if (unzipArchive("usb:/apps/homebrew_browser/temp_files.zip", "usb:/apps/homebrew_browser/temp/") == true) {
+				if (unzipArchive("usb:/apps/homebrew_browser/temp_files.zip", "usb:/apps/homebrew_browser/temp/")) {
 					if (cancel_extract == false) {
 						printf("\nDownloaded and Extracted images successfully.\n\n");
 					}
@@ -3500,7 +3500,7 @@ void check_temp_files() {
 			remove_file("usb:/apps/homebrew_browser/temp_files.zip");
 			hbb_updating = false;
 			
-			if (cancel_download == true || cancel_extract == true) {
+			if (cancel_download == true || cancel_extract) {
 				printf("\nCancelled download and extracting of image files.");
 				cancel_download = false;
 				cancel_extract = false;
@@ -3559,7 +3559,7 @@ void apps_check() {
 	//sleep(2);
 	
 	// If able to read settings
-	if (setting_last_boot_num > 0 && setting_show_updated == true) {
+	if (setting_last_boot_num > 0 && setting_show_updated) {
 		
 		printf("Checking for new/updated applications... ");
 		
@@ -3620,7 +3620,7 @@ void apps_check() {
 						http_data = true;
 					}
 					
-					if (http_data == true) {
+					if (http_data) {
 						//char *split_tok;
 						//printf("Message: %s - Count = %i\n", cmd_line, count);
 						
@@ -3791,7 +3791,7 @@ void repo_check() {
 					http_data = true;
 				}
 				
-				if (http_data == true) {
+				if (http_data) {
 					//char *split_tok;
 					//printf("Message: %s - Count = %i\n", cmd_line, count);
 					
@@ -3906,7 +3906,7 @@ void repo_check() {
 					http_data = true;
 				}
 				
-				if (http_data == true) {
+				if (http_data) {
 					//printf("OK\n");
 					if (count == 1) {
 						serv_time = atoi(cmd_line);
@@ -3980,7 +3980,7 @@ void update_check() {
 	
 	// Open the file 
 	FILE *f;
-	if (setting_use_sd == true) {
+	if (setting_use_sd) {
 		f = fopen("sd:/apps/homebrew_browser/boot.dol", "rb");
 	}
 	else {
@@ -3995,7 +3995,7 @@ void update_check() {
 		printf("Would you like to install the Homebrew Browser? Press A to install or B to skip this installation.\n");
 		
 		bool running_update = true;
-		while (running_update == true) {
+		while (running_update) {
 			WPAD_ScanPads();
 			u32 pressed = WPAD_ButtonsDown(0);
 			
@@ -4005,7 +4005,7 @@ void update_check() {
 				s32 hbb_update = 0;
 				printf("Retrieving the latest version of the Homebrew Browser...\n");
 				
-				if (setting_use_sd == true) {
+				if (setting_use_sd) {
 					hbb_update = create_and_request_file("sd:/apps/", "homebrew_browser", "/boot.dol"); 
 				}
 				else {
@@ -4017,7 +4017,7 @@ void update_check() {
 					running_update = false;
 				}
 				else {
-					if (setting_use_sd == true) {
+					if (setting_use_sd) {
 						create_and_request_file("sd:/apps/", "homebrew_browser", "/meta.xml");
 						create_and_request_file("sd:/apps/", "homebrew_browser", "/icon.png");
 						create_and_request_file("sd:/apps/", "homebrew_browser", "/loop.mod");
@@ -4069,7 +4069,7 @@ void update_check() {
 			
 			
 			bool running_update = true;
-			while (running_update == true) {
+			while (running_update) {
 				WPAD_ScanPads();
 				u32 pressed = WPAD_ButtonsDown(0);
 				
@@ -4080,14 +4080,14 @@ void update_check() {
 					printf("Retrieving the latest version of the Homebrew Browser...\n");
 					
 					// Delete boot.bak if it exists
-					if (setting_use_sd == true) {
+					if (setting_use_sd) {
 						remove_file("sd:/apps/homebrew_browser/boot.bak");
 					}
 					else {
 						remove_file("usb:/apps/homebrew_browser/boot.bak");
 					}
 					
-					if (setting_use_sd == true) {
+					if (setting_use_sd) {
 						
 						// Rename the old HBB boot file to boot.bak
 						if (rename("sd:/apps/homebrew_browser/boot.dol", "sd:/apps/homebrew_browser/boot.bak") == 0) {
@@ -4348,7 +4348,7 @@ s32 server_connect(int repo_bypass) {
 	connect_addr.sin_port = SOCKET_PORT;
 	
 	if (setting_repo == 0 || repo_bypass == 1) {
-		if (hostname_ok == true) {
+		if (hostname_ok) {
 			if (codemii_backup == false) {
 				connect_addr.sin_addr.s_addr= getipbynamecached("www.codemii.com");
 			}
@@ -4404,7 +4404,7 @@ s32 request_list() {
 	
 	FILE *f = NULL;
 	if (setting_repo == 0) {
-		if (setting_use_sd == true) {
+		if (setting_use_sd) {
 			f = fopen ("sd:/apps/homebrew_browser/listv036.txt", "rb");
 		}
 		else {
@@ -4412,7 +4412,7 @@ s32 request_list() {
 		}
 	}
 	else {
-		if (setting_use_sd == true) {
+		if (setting_use_sd) {
 			f = fopen ("sd:/apps/homebrew_browser/external_repo_list.txt", "rb");
 		}
 		else {
@@ -4433,7 +4433,7 @@ s32 request_list() {
 		rewind (f);
 		
 		if (file_check == 0) {
-			if (setting_online == true) {
+			if (setting_online) {
 				printf("Homebrew List file is 0 bytes, retrying...\n");
 				printf("If this keeps occuring, you might have to try reloading the Homebrew Browser.\n");
 			}
@@ -4613,7 +4613,7 @@ s32 request_list() {
 					add_to_list = false;
 				}
 				
-				if (add_to_list == true) {
+				if (add_to_list) {
 					if (line_number == 0) {
 						
 						if (hbb_string_len == 0) {
@@ -4740,7 +4740,7 @@ s32 request_list() {
 						strcat(boot_path, "/boot.");
 						strcat(boot_path, homebrew_list[array_count].boot_ext);
 						
-						if (dir_exists == true) {
+						if (dir_exists) {
 							//printf("Test\n");
 							
 							FILE *f = fopen(boot_path, "rb");
@@ -5058,7 +5058,7 @@ s32 request_file(s32 server, FILE *f) {
 		}
 	}
 	
-	if (hbb_updating == true) { progress_size = (int) (remote_hb_size / 29); }
+	if (hbb_updating) { progress_size = (int) (remote_hb_size / 29); }
 	
 	// Now we can continue storing the rest of the file
 	while (bytes_read > 0) {	
@@ -5070,7 +5070,7 @@ s32 request_file(s32 server, FILE *f) {
 		//}
 		
 		// If updating the HBB, display dots as the progress bar
-		if (hbb_updating == true) {
+		if (hbb_updating) {
 			int progress_count = (int) download_progress_counter / progress_size;
 			
 			if (progress_count > progress_number) {
@@ -5090,10 +5090,10 @@ s32 request_file(s32 server, FILE *f) {
 		if (cancel_download == true && setting_prompt_cancel == false) {
 			return -2;
 		}
-		else if (cancel_download == true && setting_prompt_cancel == true && cancel_confirmed == true) {
+		else if (cancel_download == true && setting_prompt_cancel == true && cancel_confirmed) {
 			return -2;
 		}
-		else if (hbb_updating == true && cancel_download == true) {
+		else if (hbb_updating == true && cancel_download) {
 			return -2;
 		}
 	}

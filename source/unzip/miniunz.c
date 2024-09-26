@@ -149,7 +149,7 @@ static int do_extract_currentfile(unzFile uf,const int* popt_extract_without_pat
 			}
 		}
 		
-		if (ok_to_unzip == true) {
+		if (ok_to_unzip) {
 
 			err = unzOpenCurrentFilePassword(uf,password);
 			if (err!=UNZ_OK)
@@ -240,12 +240,12 @@ static int do_extract_currentfile(unzFile uf,const int* popt_extract_without_pat
 						if (cancel_extract == true && setting_prompt_cancel == false) {
 							err = -1;
 						}
-						else if ((cancel_download == true || cancel_extract == true) && setting_prompt_cancel == true && cancel_confirmed == true) {
+						else if ((cancel_download == true || cancel_extract) && setting_prompt_cancel == true && cancel_confirmed) {
 							cancel_download = false;
 							cancel_extract = true;
 							err = -1;
 						}
-						if (hbb_updating == true && cancel_extract == true) {
+						if (hbb_updating == true && cancel_extract) {
 							err = -1;
 						}
 						

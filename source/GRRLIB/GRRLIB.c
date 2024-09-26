@@ -118,7 +118,7 @@ static void DrawText(const char *string, unsigned int fontSize, void *buffer) {
 			continue;
 		}
 	
-		if (BlitGlyph(&slot->bitmap, penX + slot->bitmap_left, penY - slot->bitmap_top, buffer) == true) {
+		if (BlitGlyph(&slot->bitmap, penX + slot->bitmap_left, penY - slot->bitmap_top, buffer)) {
 			/* The glyph was successfully blitted to the buffer, move the pen forwards */
 			penX += slot->advance.x >> 6;
 			previousGlyph = glyphIndex;
